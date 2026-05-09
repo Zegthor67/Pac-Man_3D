@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PAC-MAN 3D</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+
+    <!-- ─── HUD en jeu ─────────────────────────────────────────────────── -->
+    <div id="hud" style="display:none">
+      <div id="hud-score">000000</div>
+      <div id="hud-level">LVL 1</div>
+      <div id="hud-lives"></div>
+    </div>
+
+    <!-- ─── Écran de démarrage ─────────────────────────────────────────── -->
+    <div id="start-screen" class="screen">
+      <div class="pac-title">
+        <span class="pac-yellow">PAC</span>
+        <span class="pac-dot">·</span>
+        <span class="pac-white">MAN</span>
+      </div>
+      <div class="pac-subtitle">3 D &nbsp;·&nbsp; E D I T I O N</div>
+      <div class="sep"></div>
+      <div class="controls-grid">
+        <span class="key">Z Q S D</span><span class="key-desc">Déplacer</span>
+        <span class="key">↑ ↓ ← →</span><span class="key-desc">Déplacer</span>
+        <span class="key">ESC / SPC</span><span class="key-desc">Pause</span>
+      </div>
+      <div class="sep"></div>
+      <button id="btn-start" class="btn-main">INSERT COIN</button>
+    </div>
+
+    <!-- ─── Écran de pause ─────────────────────────────────────────────── -->
+    <div id="pause-screen" class="screen" style="display:none">
+      <div class="pac-title small">PAUSE</div>
+      <div class="sep"></div>
+      <div class="btn-group">
+        <button id="btn-resume"  class="btn-main">REPRENDRE</button>
+        <button id="btn-restart" class="btn-secondary">REJOUER</button>
+      </div>
+    </div>
+
+    <!-- ─── Game Over ──────────────────────────────────────────────────── -->
+    <div id="gameover-screen" class="screen" style="display:none">
+      <div class="pac-title red">GAME OVER</div>
+      <div class="score-label">SCORE FINAL</div>
+      <div id="final-score" class="final-score">000000</div>
+      <button id="btn-restart-go" class="btn-main">REJOUER</button>
+    </div>
+
+    <!-- ─── Passage de niveau ──────────────────────────────────────────── -->
+    <div id="level-screen" class="screen" style="display:none">
+      <div class="pac-title">NIVEAU</div>
+      <div id="level-num" class="level-num">2</div>
+      <div class="pac-subtitle">PRÊT !</div>
+    </div>
+
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
