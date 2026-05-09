@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 import {
-  COLS, ROWS, CELL,
+  CELL,
   PLAYER_RADIUS, GHOST_RADIUS,
   POWER_DURATION_MS,
   DEATH_DURATION, LEVEL_PAUSE_MS,
@@ -10,7 +10,8 @@ import { Pellets }      from './items/Pellets.js'
 import { Player }       from './player/Player.js'
 import { Ghost }        from './ghost/Ghost.js'
 import { ScoreManager } from './ScoreManager.js'
-import { HUD, showPause, hidePause, showGameOver, showLevelUp } from '../ui/screens.js'
+import { HUD, showPause, hidePause, showGameOver, showLevelUp, hideStart } from '../ui/screens.js'
+import { Minimap } from '../ui/Minimap.js'
 
 const STATE = {
   IDLE:    'idle',
@@ -28,6 +29,7 @@ export class Game {
 
     this._score   = new ScoreManager()
     this._pellets = new Pellets(this._scene)
+    this._minimap = new Minimap()
 
     this._player      = null
     this._ghosts      = []
@@ -46,6 +48,7 @@ export class Game {
   // ── Démarrage ─────────────────────────────────────────────────────────────
 
   start() {
+    hideStart()
     this._score.reset()
     this._level = 1
     this._loadLevel()
@@ -70,7 +73,8 @@ export class Game {
     })
 
     this._pellets.spawnAll(pelletsPos, powerPos)
-    this._engine.positionCamera(COLS * CELL, ROWS * CELL)
+    this._engine.setupFirstPerson()
+    this._engine.updateFirstPerson(this._player.position, this._player.currentDir)
 
     this._powerTimer = 0
     this._score.resetCombo()
@@ -78,6 +82,7 @@ export class Game {
 
     HUD.update(this._score.score, this._score.lives, this._level)
     HUD.show()
+    this._minimap.show()
   }
 
   _unloadLevel() {
@@ -94,6 +99,7 @@ export class Game {
     this._ghosts      = []
     this._disposables = []
     this._neonMats    = null
+    this._minimap.hide()
   }
 
   // ── Boucle ────────────────────────────────────────────────────────────────
@@ -103,6 +109,8 @@ export class Game {
     if (this._state !== STATE.PLAYING)   return
 
     this._player.update(delta, this._wallBoxes)
+    this._engine.updateFirstPerson(this._player.position, this._player.currentDir)
+    this._minimap.draw(this._player.position, this._player.currentDir, this._ghosts, this._pellets.active)
     this._ghosts.forEach(g => g.update(delta, this._player.position, this._powerTimer))
     this._tickPowerTimer(delta)
     this._checkPelletCollisions()
@@ -194,6 +202,7 @@ export class Game {
 
     if (this._score.isDead) {
       this._state = STATE.OVER
+      this._minimap.hide()
       showGameOver(this._score.score)
     } else {
       this._player.respawn()

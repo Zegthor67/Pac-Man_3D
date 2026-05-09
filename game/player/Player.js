@@ -47,6 +47,7 @@ export class Player {
     this.group.position.copy(this.position)
     this.group.rotation.y = -Math.PI / 2
     this._scene.add(this.group)
+    this.group.visible = false  // vue FPS : modèle non visible
   }
 
   update(delta, wallBoxes) {

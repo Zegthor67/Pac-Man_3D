@@ -1,15 +1,16 @@
 const $ = id => document.getElementById(id)
 
-const _hud       = $('hud')
-const _score     = $('hud-score')
-const _level     = $('hud-level')
-const _lives     = $('hud-lives')
+const _hud        = $('hud')
+const _score      = $('hud-score')
+const _level      = $('hud-level')
+const _lives      = $('hud-lives')
 const _finalScore = $('final-score')
-const _levelNum  = $('level-num')
+const _levelNum   = $('level-num')
+const _crosshair  = $('crosshair')
 
 export const HUD = {
-  show()  { _hud.style.display = 'flex' },
-  hide()  { _hud.style.display = 'none' },
+  show()  { _hud.style.display = 'flex'; _crosshair.style.display = 'block' },
+  hide()  { _hud.style.display = 'none'; _crosshair.style.display = 'none'  },
   update(score, lives, level) {
     _score.textContent = String(score).padStart(6, '0')
     _level.textContent = `LVL ${level}`
@@ -19,6 +20,10 @@ export const HUD = {
 
 export function showStart() {
   $('start-screen').style.display = 'flex'
+}
+
+export function hideStart() {
+  $('start-screen').style.display = 'none'
 }
 
 export function showPause() {

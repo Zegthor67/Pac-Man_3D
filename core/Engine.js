@@ -14,7 +14,7 @@ export class Engine {
     document.body.appendChild(this._renderer.domElement)
 
     this._camera = new THREE.PerspectiveCamera(
-      55, window.innerWidth / window.innerHeight, 0.1, 500
+      80, window.innerWidth / window.innerHeight, 0.1, 200
     )
 
     this._addLights()
@@ -39,13 +39,22 @@ export class Engine {
     this.scene.add(fill)
   }
 
-  positionCamera(mapW, mapD) {
-    const span = Math.max(mapW, mapD)
-    const dist = span * 0.9
-    this._camera.position.set(0, dist, dist * 0.55)
-    this._camera.lookAt(0, 0, 0)
-    this._camera.far = dist * 5
+  setupFirstPerson() {
+    this._camera.fov  = 80
+    this._camera.near = 0.1
+    this._camera.far  = 200
+    this.scene.fog    = new THREE.Fog(0x000000, 5, 22)
     this._camera.updateProjectionMatrix()
+  }
+
+  updateFirstPerson(playerPos, playerDir) {
+    const eyeY = playerPos.y + 0.2
+    this._camera.position.set(playerPos.x, eyeY, playerPos.z)
+    this._camera.lookAt(
+      playerPos.x + playerDir.x * 2,
+      eyeY,
+      playerPos.z + playerDir.z * 2
+    )
   }
 
   render() {
