@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import {
   CELL,
-  PLAYER_RADIUS, GHOST_RADIUS,
+  PELLET_EAT_RADIUS, POWER_EAT_RADIUS, GHOST_KILL_RADIUS,
   POWER_DURATION_MS,
   DEATH_DURATION, LEVEL_PAUSE_MS,
 } from '../constants.js'
@@ -10,15 +10,16 @@ import { Pellets }      from './items/Pellets.js'
 import { Player }       from './player/Player.js'
 import { Ghost }        from './ghost/Ghost.js'
 import { ScoreManager } from './ScoreManager.js'
-import { HUD, showPause, hidePause, showGameOver, showLevelUp, hideStart } from '../ui/screens.js'
+import { HUD, showPause, hidePause, showGameOver, hideGameOver, showLevelUp, hideStart, showCountdown, cancelCountdown } from '../ui/screens.js'
 import { Minimap } from '../ui/Minimap.js'
 
 const STATE = {
-  IDLE:    'idle',
-  PLAYING: 'playing',
-  PAUSED:  'paused',
-  DYING:   'dying',
-  OVER:    'over',
+  IDLE:      'idle',
+  COUNTDOWN: 'countdown',
+  PLAYING:   'playing',
+  PAUSED:    'paused',
+  DYING:     'dying',
+  OVER:      'over',
 }
 
 export class Game {
@@ -49,6 +50,8 @@ export class Game {
 
   start() {
     hideStart()
+    hideGameOver()
+    cancelCountdown()
     this._score.reset()
     this._level = 1
     this._loadLevel()
@@ -78,11 +81,15 @@ export class Game {
 
     this._powerTimer = 0
     this._score.resetCombo()
-    this._state = STATE.PLAYING
+    this._state = STATE.COUNTDOWN
 
     HUD.update(this._score.score, this._score.lives, this._level)
     HUD.show()
     this._minimap.show()
+
+    showCountdown(() => {
+      if (this._state === STATE.COUNTDOWN) this._state = STATE.PLAYING
+    })
   }
 
   _unloadLevel() {
@@ -135,7 +142,7 @@ export class Game {
   _checkPelletCollisions() {
     for (const item of this._pellets.active) {
       const dist = this._player.position.distanceTo(item.mesh.position)
-      if (dist >= (item.type === 'power' ? 0.9 : 0.7)) continue
+      if (dist >= (item.type === 'power' ? POWER_EAT_RADIUS : PELLET_EAT_RADIUS)) continue
 
       this._pellets.eat(item)
       if (item.type === 'normal') this._score.addPellet()
@@ -148,7 +155,7 @@ export class Game {
   _checkGhostCollisions() {
     for (const ghost of this._ghosts) {
       if (ghost.isEaten()) continue
-      if (this._player.position.distanceTo(ghost.position) > PLAYER_RADIUS + GHOST_RADIUS) continue
+      if (this._player.position.distanceTo(ghost.position) > GHOST_KILL_RADIUS) continue
 
       if (ghost.isScared()) {
         ghost.getEaten()
@@ -209,7 +216,10 @@ export class Game {
       this._ghosts.forEach(g => g.resetForRespawn())
       this._powerTimer = 0
       HUD.update(this._score.score, this._score.lives, this._level)
-      this._state = STATE.PLAYING
+      this._state = STATE.COUNTDOWN
+      showCountdown(() => {
+        if (this._state === STATE.COUNTDOWN) this._state = STATE.PLAYING
+      })
     }
   }
 

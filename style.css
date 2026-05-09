@@ -225,3 +225,30 @@ canvas {
   color: #ffdd00;
   text-shadow: 0 0 32px #ffaa00;
 }
+
+/* ── COUNTDOWN ─────────────────────────────────────────────────────── */
+#countdown-screen {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+#countdown-num {
+  font-family: 'Press Start 2P', monospace;
+  font-size: clamp(100px, 20vw, 180px);
+  color: #ffdd00;
+  text-shadow: 0 0 40px #ffaa00, 0 0 80px #ff8800;
+  animation: countdown-pop 0.85s ease-out forwards;
+}
+
+@keyframes countdown-pop {
+  0%   { transform: scale(2.0); opacity: 0; }
+  25%  { transform: scale(1.0); opacity: 1; }
+  85%  { transform: scale(1.0); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}

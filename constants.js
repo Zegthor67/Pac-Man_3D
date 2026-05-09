@@ -8,6 +8,13 @@ export const PLAYER_SPEED  = 8
 export const PLAYER_RADIUS = 0.45
 export const PLAYER_Y      = 0.5
 
+// Eat radius for pellets (larger than visual size for comfortable collection)
+export const PELLET_EAT_RADIUS = 1.1
+export const POWER_EAT_RADIUS  = 1.3
+
+// Kill radius for ghost-player contact (larger than movement radius for fair FPS feel)
+export const GHOST_KILL_RADIUS = 1.4
+
 export const GHOST_RADIUS        = 0.45
 export const GHOST_SPEED_NORMAL  = 4
 export const GHOST_SPEED_SCARED  = 3
