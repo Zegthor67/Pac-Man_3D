@@ -62,8 +62,8 @@ canvas {
   width: 168px;
   height: 168px;
   border: 2px solid #2277ff;
-  box-shadow: 0 0 10px #2255cc, 0 0 22px rgba(34, 85, 204, 0.35);
-  border-radius: 4px;
+  box-shadow: 0 0 12px #2255cc, 0 0 28px rgba(34, 85, 204, 0.4), inset 0 0 8px rgba(0,0,40,0.6);
+  border-radius: 50%;
   z-index: 20;
   display: none;
   image-rendering: pixelated;

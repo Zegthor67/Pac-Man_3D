@@ -2,6 +2,7 @@ const PELLET_PTS = 10
 const POWER_PTS  = 50
 const GHOST_PTS  = [200, 400, 800, 1600]
 const START_LIVES = 3
+const MAX_LIVES   = 6
 
 export class ScoreManager {
   constructor() {
@@ -27,7 +28,8 @@ export class ScoreManager {
     this._comboIdx++
   }
 
-  loseLife() { this._lives-- }
+  loseLife()  { this._lives-- }
+  gainLife()  { if (this._lives < MAX_LIVES) this._lives++ }
 
   get score()  { return this._score }
   get lives()  { return this._lives }

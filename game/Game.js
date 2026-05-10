@@ -171,6 +171,7 @@ export class Game {
   _checkLevelComplete() {
     if (this._pellets.remaining > 0) return
     this._state = STATE.IDLE
+    this._score.gainLife()
     this._level++
     showLevelUp(this._level)
     setTimeout(() => this._loadLevel(), LEVEL_PAUSE_MS)

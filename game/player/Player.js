@@ -15,8 +15,11 @@ export class Player {
     this.currentDir = new THREE.Vector3(1, 0, 0)
     this.moving     = false
 
-    this._jawAngle = 0
-    this._jawDir   = 1
+    this._jawAngle  = 0
+    this._jawDir    = 1
+    this._prevLeft  = false
+    this._prevRight = false
+    this._prevDown  = false
 
     this._buildMesh()
   }
@@ -59,10 +62,20 @@ export class Player {
   }
 
   _readInput() {
-    if (this._input.up)    this.wantedDir.set( 0, 0, -1)
-    if (this._input.down)  this.wantedDir.set( 0, 0,  1)
-    if (this._input.left)  this.wantedDir.set(-1, 0,  0)
-    if (this._input.right) this.wantedDir.set( 1, 0,  0)
+    // Virages et recul : front montant uniquement — évite le re-calcul chaque frame
+    // qui ferait spiraler le joueur quand la touche est maintenue après un virage.
+    const freshLeft  = this._input.left  && !this._prevLeft
+    const freshRight = this._input.right && !this._prevRight
+    const freshDown  = this._input.down  && !this._prevDown
+
+    if      (freshLeft)        this.wantedDir.set( this.currentDir.z, 0, -this.currentDir.x)
+    else if (freshRight)       this.wantedDir.set(-this.currentDir.z, 0,  this.currentDir.x)
+    else if (this._input.up)   this.wantedDir.copy(this.currentDir)
+    else if (freshDown)        this.wantedDir.copy(this.currentDir).negate()
+
+    this._prevLeft  = this._input.left
+    this._prevRight = this._input.right
+    this._prevDown  = this._input.down
   }
 
   _move(delta, wallBoxes) {
@@ -109,8 +122,11 @@ export class Player {
     this.position.copy(this.startPos)
     this.wantedDir.set(1, 0, 0)
     this.currentDir.set(1, 0, 0)
-    this._jawAngle = 0
-    this.moving    = false
+    this._jawAngle  = 0
+    this.moving     = false
+    this._prevLeft  = false
+    this._prevRight = false
+    this._prevDown  = false
     this.group.scale.setScalar(1)
     this.group.rotation.y = -Math.PI / 2
     this.group.position.copy(this.position)

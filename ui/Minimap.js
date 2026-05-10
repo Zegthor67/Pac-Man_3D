@@ -18,17 +18,34 @@ export class Minimap {
 
   draw(playerPos, playerDir, ghosts, activePellets) {
     const ctx = this._ctx
+    const W   = this._canvas.width
+    const H   = this._canvas.height
+    const cx  = W / 2
+    const cy  = H / 2
+    const R   = Math.min(cx, cy) - 1
 
-    ctx.clearRect(0, 0, this._canvas.width, this._canvas.height)
+    ctx.clearRect(0, 0, W, H)
 
-    // Fond semi-transparent
-    ctx.fillStyle = 'rgba(0, 0, 8, 0.88)'
-    ctx.fillRect(0, 0, this._canvas.width, this._canvas.height)
+    // ── Clip circulaire ─────────────────────────────────────────────────────
+    ctx.save()
+    ctx.beginPath()
+    ctx.arc(cx, cy, R, 0, Math.PI * 2)
+    ctx.clip()
 
-    // Murs (pré-calculé)
+    ctx.fillStyle = 'rgba(0, 0, 8, 0.92)'
+    ctx.fillRect(0, 0, W, H)
+
+    // ── Rotation : direction du joueur toujours vers le haut ─────────────
+    const pp       = this._toMapPx(playerPos.x, playerPos.z)
+    const rotAngle = -Math.atan2(playerDir.x, -playerDir.z)
+
+    ctx.save()
+    ctx.translate(cx, cy)
+    ctx.rotate(rotAngle)
+    ctx.translate(-pp.x, -pp.y)
+
     ctx.drawImage(this._wallCanvas, 0, 0)
 
-    // Pastilles restantes
     if (activePellets) {
       for (const item of activePellets) {
         const p = this._toMapPx(item.mesh.position.x, item.mesh.position.z)
@@ -44,12 +61,11 @@ export class Minimap {
       }
     }
 
-    // Fantômes
     if (ghosts) {
       for (const ghost of ghosts) {
         if (ghost.isEaten()) continue
         const p = this._toMapPx(ghost.position.x, ghost.position.z)
-        ctx.fillStyle = ghost.isScared() ? '#4444ff' : GHOST_COLORS[ghost.index]
+        ctx.fillStyle    = ghost.isScared() ? '#4444ff' : GHOST_COLORS[ghost.index]
         ctx.shadowColor  = ctx.fillStyle
         ctx.shadowBlur   = 4
         ctx.beginPath()
@@ -59,24 +75,32 @@ export class Minimap {
       }
     }
 
-    // Joueur (point jaune + flèche de direction)
-    const pp = this._toMapPx(playerPos.x, playerPos.z)
+    ctx.restore() // ── fin transform monde ───────────────────────────────
+
+    // ── Joueur centré (triangle pointe vers le haut = sens de marche) ───
     ctx.fillStyle   = '#ffdd00'
     ctx.shadowColor = '#ffaa00'
-    ctx.shadowBlur  = 6
+    ctx.shadowBlur  = 8
     ctx.beginPath()
-    ctx.arc(pp.x, pp.y, SCALE * 0.48, 0, Math.PI * 2)
+    ctx.moveTo(cx,              cy - SCALE * 1.1)
+    ctx.lineTo(cx - SCALE * 0.5, cy + SCALE * 0.4)
+    ctx.lineTo(cx + SCALE * 0.5, cy + SCALE * 0.4)
+    ctx.closePath()
     ctx.fill()
     ctx.shadowBlur = 0
 
-    if (playerDir) {
-      ctx.strokeStyle = '#ffaa00'
-      ctx.lineWidth   = 1.5
-      ctx.beginPath()
-      ctx.moveTo(pp.x, pp.y)
-      ctx.lineTo(pp.x + playerDir.x * SCALE * 0.95, pp.y + playerDir.z * SCALE * 0.95)
-      ctx.stroke()
-    }
+    // ── Repère Nord (point bleu sur le bord du cercle) ──────────────────
+    const nx = cx + Math.sin(rotAngle) * (R - 5)
+    const ny = cy - Math.cos(rotAngle) * (R - 5)
+    ctx.fillStyle   = '#88aaff'
+    ctx.shadowColor = '#4477ff'
+    ctx.shadowBlur  = 4
+    ctx.beginPath()
+    ctx.arc(nx, ny, 3, 0, Math.PI * 2)
+    ctx.fill()
+    ctx.shadowBlur = 0
+
+    ctx.restore() // ── fin clip circulaire ───────────────────────────────
   }
 
   _buildWallCache() {
