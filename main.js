@@ -1,9 +1,9 @@
-import * as THREE          from 'three'
-import { Engine }          from './core/Engine.js'
-import { InputHandler }    from './input/InputHandler.js'
-import { Game }            from './game/Game.js'
-import { buttons, showStart } from './ui/screens.js'
-import { MAX_DELTA }       from './constants.js'
+import * as THREE               from 'three'
+import { Engine }               from './core/Engine.js'
+import { InputHandler }         from './input/InputHandler.js'
+import { Game }                 from './Game.js'
+import { buttons, showStart }   from './ui/Overlay.js'
+import { MAX_DELTA }            from './config/constants.js'
 
 const engine = new Engine()
 const input  = new InputHandler()

@@ -1,5 +1,5 @@
-import { PACMAN_MAP, COLS, ROWS } from '../game/map/layout.js'
-import { CELL } from '../constants.js'
+import { PACMAN_MAP, COLS, ROWS } from '../config/mapLayout.js'
+import { CELL } from '../config/constants.js'
 
 const SCALE = 8
 const GHOST_COLORS = ['#ff4444', '#ff88ff', '#00ccff', '#ff8800']
